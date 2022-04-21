@@ -27,7 +27,7 @@ const ExpanderRaw = ({
 }: InternalProps) => {
   const [open, setOpen] = useState(false);
 
-  const toggleExpander = useCallback((event: React.MouseEvent) => {
+  const toggleExpander = useCallback(() => {
     setOpen((x) => !x);
   }, []);
 

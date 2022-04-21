@@ -1,25 +1,18 @@
 :root {
+  --bc-primary-button: #2d4156;
+  --bc-primary-button-hover: #1d2e38;
+  --bc-primary-button-color: #40505a;
+  --bc-secondary-button: #e5ebef;
+  --bc-secondary-button-hover: #d8e0e6;
+
   --cc-bg: #fff;
-  --cc-text: #2d4156;
-  --cc-btn-primary-bg: #2d4156;
-  --cc-btn-primary-text: var(--cc-bg);
-  --cc-btn-primary-hover-bg: #1d2e38;
-  --cc-btn-secondary-bg: #eaeff2;
-  --cc-btn-secondary-text: var(--cc-text);
-  --cc-btn-secondary-hover-bg: #d8e0e6;
-  --cc-toggle-bg-off: #919ea6;
-  --cc-toggle-bg-on: var(--cc-btn-primary-bg);
-  --cc-toggle-bg-readonly: #d5dee2;
-  --cc-toggle-knob-bg: #fff;
-  --cc-toggle-knob-icon-color: #ecf2fa;
-  --cc-block-text: var(--cc-text);
-  --cc-cookie-category-block-bg: #f0f4f7;
-  --cc-cookie-category-block-bg-hover: #e9eff4;
-  --cc-section-border: #f1f3f5;
-  --cc-cookie-table-border: #e9edf2;
+  --cc-text: var(--bc-primary-button);
+
   --cc-overlay-bg: rgba(4, 6, 8, 0.85);
-  --cc-webkit-scrollbar-bg: #cfd5db;
-  --cc-webkit-scrollbar-bg-hover: #9199a0;
+  --cc-section-border: #f1f3f5;
+
+  --max-width: 600px;
+  --cc-cookie-category-block-bg: #f0f4f7;
 }
 
 #cookie-wrapper {
@@ -51,9 +44,34 @@
     transition: visibility 0.25s linear, opacity 0.25s ease,
       transform 0.25s ease;
   }
+
+  & .footer-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+
+    @media (max-width: 768px) {
+      flex-direction: column;
+    }
+
+    & > .button-group {
+      width: 100%;
+
+      display: flex;
+      justify-content: flex-end;
+      gap: 16px;
+
+      @media (max-width: 768px) {
+        flex-direction: column;
+      }
+    }
+  }
 }
 
 #cookie-modal {
+  width: 50%;
+
   padding: 20px;
   background: #fff;
 
@@ -66,12 +84,8 @@
     margin-bottom: 12px;
   }
 
-  & #button-wrapper {
-    margin-top: 12px;
-
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
+  @media (max-width: 600px) {
+    width: 100%;
   }
 }
 
@@ -80,7 +94,6 @@
   top: 50%;
 
   width: 100%;
-  max-width: 600px;
   height: 100%;
   max-height: 37.5em;
 
@@ -95,6 +108,19 @@
   transform: translateY(-50%);
 
   z-index: 3;
+
+  @media (max-width: 600px) {
+    max-height: none;
+
+    border-radius: 0;
+  }
+}
+
+#cookie-modal,
+#settings-wrapper {
+  box-sizing: border-box;
+
+  max-width: var(--max-width);
 }
 
 #settings-body {

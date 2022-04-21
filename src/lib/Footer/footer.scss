@@ -1,14 +1,15 @@
-#settings-footer {
+#cookie-wrapper #settings-footer {
   height: 80px;
-
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 
   padding: 0 32px;
 
-  & > div {
-    display: flex;
-    gap: 16px;
+  & > .button-group {
+    justify-content: flex-start;
+  }
+
+  @media (max-width: 768px) {
+    height: auto;
+
+    padding: 32px;
   }
 }

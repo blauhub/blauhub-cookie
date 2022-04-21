@@ -8,8 +8,8 @@
   font-size: 14px;
   font-weight: 600;
 
-  color: #40505a;
-  background: #e5ebef;
+  color: var(--bc-primary-button-color);
+  background: var(--bc-secondary-button);
   cursor: pointer;
   user-select: none;
   text-align: center;
@@ -21,16 +21,24 @@
 
   &:active,
   &:hover {
-    background: #d8e0e6;
+    background: var(--bc-secondary-button-hover);
   }
 
   &[variant="primary"] {
     color: #fff;
-    background: #2d4156;
+    background: var(--bc-primary-button);
 
     &:active,
     &:hover {
-      background: #1d2e38;
+      background: var(--bc-primary-button-hover);
     }
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
+  @media (max-width: 1024px) {
+    padding: 0 12px;
   }
 }

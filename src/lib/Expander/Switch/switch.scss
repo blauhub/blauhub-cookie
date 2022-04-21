@@ -2,6 +2,8 @@
 // https://web.dev/building-a-switch-component/
 
 .switch {
+  position: relative;
+
   cursor: pointer;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
@@ -21,6 +23,33 @@
 
   --thumb-color: var(--thumb);
   --thumb-color-highlight: var(--thumb-highlight);
+
+  &::before,
+  &::after {
+    position: absolute;
+
+    top: 50%;
+
+    margin: 0 12px;
+
+    color: var(--bc-secondary-button);
+
+    transform: translateY(-50%);
+  }
+
+  &::before {
+    content: "\2713";
+
+    left: 0;
+    font-size: 12px;
+  }
+  &::after {
+    content: "\00d7";
+
+    right: 0;
+
+    color: white;
+  }
 
   & > input {
     --thumb-position: 0%;

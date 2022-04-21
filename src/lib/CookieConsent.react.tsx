@@ -15,6 +15,11 @@ interface PropsType {
   readonly description?: React.ReactNode;
   readonly children?: React.ReactNode;
   readonly onAcceptSelection: (permisssions: string[]) => void;
+  readonly text?: {
+    readonly openSettings?: string;
+    readonly acceptNecessary?: string;
+    readonly acceptAll?: string;
+  };
 }
 
 // const config = {
@@ -34,6 +39,16 @@ interface PropsType {
 //   revision: 0,
 //   script_selector: "data-cookiecategory",
 // };
+
+const DEFAULT_TEXT = {
+  OPEN_SETTINGS: "Open settings",
+  ACCEPT_NECESSARY: "Accept necessary",
+  ACCEPT_ALL: "Accept all",
+};
+
+const COOKIE_CONFIG = {
+  expires: 182, // 6 months
+};
 
 export const CookieContext = React.createContext<{
   revision: number;
@@ -56,6 +71,7 @@ const CookieConsentRaw = ({
   description,
   children,
   onAcceptSelection,
+  text = {},
 }: PropsType) => {
   const requiredPermissions: string[] = useMemo(
     () =>
@@ -93,7 +109,7 @@ const CookieConsentRaw = ({
   const saveOnAccept = useCallback(
     (selection: string[]) => {
       Cookies.set(COOKIE_PREFIX, JSON.stringify(selection), {
-        expires: 182, // 6 months
+        ...COOKIE_CONFIG,
       });
 
       setOpen(false);
@@ -120,6 +136,13 @@ const CookieConsentRaw = ({
 
   if (!open) return null;
 
+  const {
+    openSettings = DEFAULT_TEXT.OPEN_SETTINGS,
+    acceptNecessary = DEFAULT_TEXT.ACCEPT_NECESSARY,
+    acceptAll = DEFAULT_TEXT.ACCEPT_ALL,
+    ...footer
+  } = text;
+
   return (
     <div id="cookie-wrapper">
       <div id="cookie-overlay" />
@@ -130,17 +153,17 @@ const CookieConsentRaw = ({
           <div>{description}</div>
         </div>
 
-        <div id="button-wrapper">
+        <div className="footer-wrapper">
           <Button type="button" onClick={onOpenSettings}>
-            Open Settings
+            {openSettings}
           </Button>
 
-          <div>
+          <div className="button-group">
             <Button type="button" variant="primary" onClick={onAcceptRequired}>
-              Accept necessary
+              {acceptNecessary}
             </Button>
             <Button type="button" variant="primary" onClick={onAcceptAll}>
-              Accept all
+              {acceptAll}
             </Button>
           </div>
         </div>
@@ -168,6 +191,7 @@ const CookieConsentRaw = ({
         </div>
 
         <Footer
+          text={footer}
           onAcceptAll={onAcceptAll}
           onAcceptRequired={onAcceptRequired}
           onAcceptCurrent={onAcceptCurrent}
