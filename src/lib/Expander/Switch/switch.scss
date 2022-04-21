@@ -1,0 +1,88 @@
+// DOCS
+// https://web.dev/building-a-switch-component/
+
+.switch {
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+
+  --track-size: calc(var(--thumb-size) * 2);
+  --track-padding: 2px;
+
+  --track-inactive: #919ea6;
+  --track-active: #2d4156;
+
+  --track-color-inactive: var(--track-inactive);
+  --track-color-active: var(--track-active);
+
+  --thumb-size: 24px;
+  --thumb: hsl(0 0% 100%);
+  --thumb-highlight: hsl(0 0% 0% / 25%);
+
+  --thumb-color: var(--thumb);
+  --thumb-color-highlight: var(--thumb-highlight);
+
+  & > input {
+    --thumb-position: 0%;
+    box-sizing: content-box;
+
+    flex-shrink: 0;
+    display: grid;
+    align-items: center;
+    grid: [track] 1fr / [track] 1fr;
+
+    appearance: none;
+    border: none;
+    outline-offset: 5px;
+    box-sizing: content-box;
+
+    padding: var(--track-padding);
+    background: var(--track-color-inactive);
+    inline-size: var(--track-size);
+    block-size: var(--thumb-size);
+    border-radius: var(--track-size);
+
+    transition: all 200ms ease-in-out;
+
+    &:checked {
+      background: var(--track-color-active);
+
+      --thumb-position: calc(var(--track-size) - 100%);
+    }
+
+    &:indeterminate {
+      --thumb-position: calc((var(--track-size) / 2) - (var(--thumb-size) / 2));
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      // --thumb-color: var(--thumb-color);
+
+      &::before {
+        cursor: not-allowed;
+      }
+    }
+
+    &:not(:disabled):hover::before {
+      --highlight-size: 4px;
+    }
+
+    &::before {
+      content: "";
+
+      grid-area: track;
+      inline-size: var(--thumb-size);
+      block-size: var(--thumb-size);
+
+      background: var(--thumb-color);
+      border-radius: 50%;
+
+      box-shadow: 0 0 0 var(--highlight-size) var(--thumb-color-highlight);
+
+      cursor: pointer;
+      transform: translateX(var(--thumb-position));
+
+      transition: all 200ms ease-in-out;
+    }
+  }
+}
