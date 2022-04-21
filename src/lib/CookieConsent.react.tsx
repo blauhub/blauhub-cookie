@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useCallback } from "react";
+import Cookies from "js-cookie";
 
 // Components
 import { Expander } from "./Expander";
@@ -9,8 +10,9 @@ import { Footer } from "./Footer";
 import "./consent.scss";
 
 interface PropsType {
-  readonly isOpen?: boolean;
+  readonly blocking?: boolean;
   readonly title?: React.ReactNode;
+  readonly description?: React.ReactNode;
   readonly children?: React.ReactNode;
   readonly onAcceptSelection: (permisssions: string[]) => void;
 }
@@ -33,30 +35,11 @@ interface PropsType {
 //   script_selector: "data-cookiecategory",
 // };
 
-const blocks = [
-  {
-    title: "Necessary cookies",
-    description:
-      "These cookies are required for you to browse the website and use its features.",
-    toggle: {
-      enabled: true,
-      readonly: true,
-    },
-  },
-  {
-    title: "Functional cookies",
-    description:
-      "To improve our service we collect anonymous information about how you use our website.",
-    toggle: {
-      enabled: false,
-      readonly: false,
-    },
-  },
-];
-
 export const CookieContext = React.createContext<{
+  revision: number;
   permissions: string[];
 }>({
+  revision: 0,
   permissions: [],
 });
 
@@ -65,32 +48,33 @@ const getAllExpander = (expander: React.ReactNode) =>
     (child: React.ReactElement) => child.type === Expander
   );
 
+const COOKIE_PREFIX = "bcc";
+
 const CookieConsentRaw = ({
-  isOpen,
+  blocking = true,
   title,
+  description,
   children,
   onAcceptSelection,
 }: PropsType) => {
-  const requiredPermissions = useMemo(
+  const requiredPermissions: string[] = useMemo(
     () =>
       getAllExpander(children)
-        .filter(
-          (child: React.ReactElement) =>
-            child.props.isRequired || child.props.defaultChecked
-        )
+        .filter((child: React.ReactElement) => child.props.isRequired)
         .map((child: React.ReactElement) => child.props.id),
     []
   );
 
   const [selected, setSelected] = useState<string[]>(requiredPermissions);
-  const [isVisible, setIsVisible] = useState(false);
+  const [open, setOpen] = useState(blocking && !Cookies.get(COOKIE_PREFIX));
+  const [settingsVisible, setSettingsVisible] = useState(false);
 
   const onOpenSettings = useCallback(() => {
-    setIsVisible(!!children);
+    setSettingsVisible(!!children);
   }, [children]);
 
   const onCloseSettings = useCallback(() => {
-    setIsVisible(false);
+    setSettingsVisible(false);
   }, []);
 
   const onToggleSelection = useCallback(
@@ -106,13 +90,35 @@ const CookieConsentRaw = ({
     []
   );
 
+  const saveOnAccept = useCallback(
+    (selection: string[]) => {
+      Cookies.set(COOKIE_PREFIX, JSON.stringify(selection), {
+        expires: 182, // 6 months
+      });
+
+      setOpen(false);
+      onAcceptSelection(selection);
+    },
+    [onAcceptSelection]
+  );
+
+  const onAcceptCurrent = useCallback(() => {
+    saveOnAccept(selected);
+  }, [selected, saveOnAccept]);
+
+  const onAcceptRequired = useCallback(() => {
+    saveOnAccept(requiredPermissions);
+  }, [requiredPermissions, saveOnAccept]);
+
   const onAcceptAll = useCallback(() => {
     const permissions: string[] = getAllExpander(children).map(
       (child: React.ReactElement) => child.props.id
     );
 
-    onAcceptSelection(permissions);
-  }, [children, onAcceptSelection]);
+    saveOnAccept(permissions);
+  }, [children, saveOnAccept]);
+
+  if (!open) return null;
 
   return (
     <div id="cookie-wrapper">
@@ -121,19 +127,22 @@ const CookieConsentRaw = ({
       <div id="cookie-modal">
         <div role="dialog" aria-modal="true">
           <header role="heading">{title}</header>
-          <div>DESCRIPTION</div>
+          <div>{description}</div>
         </div>
 
         <div id="button-wrapper">
           <Button type="button" onClick={onOpenSettings}>
             Open Settings
           </Button>
-          <Button type="button" variant="primary" onClick={undefined}>
-            Accept necessary
-          </Button>
-          <Button type="button" variant="primary" onClick={onAcceptAll}>
-            Accept all
-          </Button>
+
+          <div>
+            <Button type="button" variant="primary" onClick={onAcceptRequired}>
+              Accept necessary
+            </Button>
+            <Button type="button" variant="primary" onClick={onAcceptAll}>
+              Accept all
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -141,8 +150,8 @@ const CookieConsentRaw = ({
         id="settings-wrapper"
         role="dialog"
         style={{
-          opacity: isVisible ? 1 : 0,
-          pointerEvents: isVisible ? "all" : "none",
+          opacity: settingsVisible ? 1 : 0,
+          pointerEvents: settingsVisible ? "all" : "none",
         }}
       >
         <Header title="Cookie settings" onCloseSettings={onCloseSettings} />
@@ -158,7 +167,11 @@ const CookieConsentRaw = ({
           )}
         </div>
 
-        <Footer />
+        <Footer
+          onAcceptAll={onAcceptAll}
+          onAcceptRequired={onAcceptRequired}
+          onAcceptCurrent={onAcceptCurrent}
+        />
       </div>
     </div>
   );

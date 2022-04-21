@@ -7,9 +7,10 @@ import "./expander.scss";
 
 interface PropsType extends React.HTMLAttributes<HTMLDivElement> {
   readonly id: string;
+  readonly title: string;
+  readonly children: React.ReactNode;
   readonly isRequired?: boolean;
   readonly isDisabled?: boolean;
-  readonly defaultChecked?: boolean;
 }
 
 interface InternalProps extends PropsType {
@@ -17,9 +18,10 @@ interface InternalProps extends PropsType {
 }
 
 const ExpanderRaw = ({
+  title,
+  children,
   isRequired,
   isDisabled,
-  defaultChecked = false,
   onToggleSelection,
   ...props
 }: InternalProps) => {
@@ -34,21 +36,17 @@ const ExpanderRaw = ({
       <div className="expander-header" onClick={toggleExpander}>
         <div className="expander-title">
           <span className={`caret ${open ? "up" : "down"}`} />
-          <h5>title</h5>
+          <h5>{title}</h5>
         </div>
 
         <Switch
           disabled={isDisabled || isRequired}
-          defaultChecked={isRequired || defaultChecked}
+          defaultChecked={isRequired}
           onChange={onToggleSelection}
         />
       </div>
 
-      {open && (
-        <div className="expander-content">
-          <span>hallo</span>
-        </div>
-      )}
+      {open && <div className="expander-content">{children}</div>}
     </div>
   );
 };
