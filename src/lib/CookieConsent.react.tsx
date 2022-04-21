@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useContext, useCallback } from "react";
 import Cookies from "js-cookie";
 
 // Components
@@ -6,6 +6,12 @@ import { Expander } from "./Expander";
 import { Button } from "./Button";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
+
+// Constants
+import { COOKIE_PREFIX } from "./CookieConsent.constants";
+
+// Context
+import { CookieContext } from "./CookieConsentContext.react";
 
 import "./consent.scss";
 
@@ -50,20 +56,10 @@ const COOKIE_CONFIG = {
   expires: 182, // 6 months
 };
 
-export const CookieContext = React.createContext<{
-  revision: number;
-  permissions: string[];
-}>({
-  revision: 0,
-  permissions: [],
-});
-
 const getAllExpander = (expander: React.ReactNode) =>
   React.Children.toArray(expander).filter(
     (child: React.ReactElement) => child.type === Expander
   );
-
-const COOKIE_PREFIX = "bcc";
 
 const CookieConsentRaw = ({
   blocking = true,
@@ -80,6 +76,9 @@ const CookieConsentRaw = ({
         .map((child: React.ReactElement) => child.props.id),
     []
   );
+
+  // Only use setter
+  const {} = useContext(CookieContext);
 
   const [selected, setSelected] = useState<string[]>(requiredPermissions);
   const [open, setOpen] = useState(blocking && !Cookies.get(COOKIE_PREFIX));

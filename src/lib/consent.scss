@@ -127,4 +127,10 @@
   flex: 1 0;
 
   padding: 24px;
+
+  overflow-y: scroll;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
