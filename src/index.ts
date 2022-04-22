@@ -1,1 +1,6 @@
-export { CookieConsent, CookieConsentContext, useCookieConstent } from "./lib";
+export {
+  CookieConsent,
+  CookieConsentContext,
+  useCookieConstent,
+  Expander,
+} from "./lib";

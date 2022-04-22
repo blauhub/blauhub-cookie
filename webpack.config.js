@@ -9,9 +9,12 @@ const config = {
     path: path.resolve(__dirname, "dist"),
     filename: "bhcookie.min.js",
     library: {
-      name: "bhcookie",
-      type: "umd",
+      // name: "bhcookie",
+      type: "module",
     },
+  },
+  experiments: {
+    outputModule: true,
   },
   devtool: "source-map",
   mode: "production",
