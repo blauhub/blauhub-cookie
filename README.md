@@ -21,6 +21,8 @@ Blauhub cookie aims to be a modern DSGVO and TTDSG conform cookie banner. It is 
 
 ## Disclaimer
 
+This publication is provided as is without any express or implied warranties. While every effort has been taken to ensure the accuracy of the information contained in this publication, the authors/maintainers/contributors assume no responsibility for errors or omissions, or for damages resulting from the use of the information contained herein.
+
 ## License
 
 [MIT](./LICENSE)
