@@ -2,7 +2,7 @@
   "name": "blauhub-cookie",
   "version": "0.1.0",
   "description": "Blauhub dsgvo and TTDSG compatible react cookie consent",
-  "module": "dist/bhcookie.min.js",
+  "main": "dist/bhcookie.min.js",
   "types": "dist/index.d.ts",
   "author": "Raoul Baron <baron@blauhub.io> (https://blauhub.io)",
   "license": "MIT",
