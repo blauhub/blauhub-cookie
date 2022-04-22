@@ -6,7 +6,7 @@ import { Button } from "../Button";
 import "./header.scss";
 
 interface PropsType {
-  readonly title?: string;
+  readonly title?: React.ReactNode;
   readonly onCloseSettings: () => void;
 }
 

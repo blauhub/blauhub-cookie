@@ -1,18 +1,27 @@
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 
 const config = {
-  entry: "./src/index.tsx",
+  entry: "./src/index.ts",
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "bhcookie.min.js",
-    // publicPath: "/",
+    library: {
+      name: "bhcookie",
+      type: "umd",
+    },
   },
-  devtool: "eval-cheap-source-map",
-  mode: "development",
+  devtool: "source-map",
+  mode: "production",
   resolve: {
     extensions: [".tsx", ".ts", ".js"],
   },
+  optimization: {
+    minimizer: [`...`, new CssMinimizerPlugin()],
+  },
+  externals: { react: "React", "react-dom": "ReactDOM" },
   module: {
     rules: [
       {
@@ -22,20 +31,11 @@ const config = {
       },
       {
         test: /\.s[ac]ss$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
+        use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"],
       },
     ],
   },
-  devServer: {
-    port: 9000,
-    compress: true,
-  },
-  plugins: [
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: "./src/index.html",
-    }),
-  ],
+  plugins: [new MiniCssExtractPlugin(), new CleanWebpackPlugin()],
 };
 
 module.exports = config;

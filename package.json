@@ -6,20 +6,22 @@
   "author": "Raoul Baron (blauhub.io)",
   "license": "MIT",
   "scripts": {
-    "build": "cross-env NODE_ENV=production webpack --config prod.config.js",
-    "watch": "cross-env NODE_ENV=development webpack-dev-server"
+    "build": "cross-env NODE_ENV=production webpack",
+    "watch": "cross-env NODE_ENV=development webpack-dev-server --config ./demo/simple/webpack.config.js"
   },
   "devDependencies": {
     "@types/js-cookie": "3.0.1",
-    "@types/react": "18.0.5",
-    "@types/react-dom": "18.0.1",
+    "@types/react": "18.0.6",
+    "@types/react-dom": "18.0.2",
+    "clean-webpack-plugin": "4.0.0",
     "cross-env": "7.0.3",
     "css-loader": "6.7.1",
-    "html-webpack-plugin": "^5.5.0",
+    "css-minimizer-webpack-plugin": "3.4.1",
+    "html-webpack-plugin": "5.5.0",
     "mini-css-extract-plugin": "2.6.0",
     "react": "18.0.0",
     "react-dom": "18.0.0",
-    "sass": "1.50.0",
+    "sass": "1.50.1",
     "sass-loader": "12.6.0",
     "style-loader": "^3.3.1",
     "ts-loader": "9.2.8",

@@ -5,7 +5,7 @@ import Cookies from "js-cookie";
 import { Expander } from "./Expander";
 import { Button } from "./Button";
 import { Header } from "./Header";
-import { Footer } from "./Footer";
+import { Footer, FooterProps } from "./Footer";
 
 // Constants
 import { COOKIE_PREFIX } from "./CookieConsent.constants";
@@ -15,7 +15,11 @@ import { CookieContext } from "./CookieConsentContext.react";
 
 import "./consent.scss";
 
-interface PropsType {
+type SettingsProps = FooterProps["text"] & {
+  readonly title?: React.ReactNode;
+};
+
+export interface PropsType {
   readonly blocking?: boolean;
   readonly title?: React.ReactNode;
   readonly description?: React.ReactNode;
@@ -25,26 +29,10 @@ interface PropsType {
     readonly openSettings?: string;
     readonly acceptNecessary?: string;
     readonly acceptAll?: string;
+
+    readonly settings?: SettingsProps;
   };
 }
-
-// const config = {
-//   mode: "opt-in", // 'opt-in', 'opt-out'
-//   current_lang: "en",
-//   auto_language: null,
-//   autorun: true, // run as soon as loaded
-//   page_scripts: true,
-//   hide_from_bots: true,
-//   cookie_name: "cc_cookie",
-//   cookie_expiration: 182, // default: 6 months (in days)
-//   cookie_domain: window.location.hostname, // default: current domain
-//   cookie_path: "/",
-//   cookie_same_site: "Lax",
-//   use_rfc_cookie: false,
-//   autoclear_cookies: true,
-//   revision: 0,
-//   script_selector: "data-cookiecategory",
-// };
 
 const DEFAULT_TEXT = {
   OPEN_SETTINGS: "Open settings",
@@ -52,14 +40,19 @@ const DEFAULT_TEXT = {
   ACCEPT_ALL: "Accept all",
 };
 
+const SETTINGS_TEXT = {
+  TITLE: "Cookie settings",
+};
+
 const COOKIE_CONFIG = {
   expires: 182, // 6 months
 };
 
+const elementIsExpander = (child: React.ReactElement) =>
+  child.type === Expander;
+
 const getAllExpander = (expander: React.ReactNode) =>
-  React.Children.toArray(expander).filter(
-    (child: React.ReactElement) => child.type === Expander
-  );
+  React.Children.toArray(expander).filter(elementIsExpander);
 
 const CookieConsentRaw = ({
   blocking = true,
@@ -69,16 +62,25 @@ const CookieConsentRaw = ({
   onAcceptSelection,
   text = {},
 }: PropsType) => {
-  const requiredPermissions: string[] = useMemo(
-    () =>
-      getAllExpander(children)
-        .filter((child: React.ReactElement) => child.props.isRequired)
-        .map((child: React.ReactElement) => child.props.id),
-    []
+  const expander = useMemo(() => getAllExpander(children), [children]);
+  const expanderIds: string[] = expander.map(
+    (expander: React.ReactElement) => expander.props.id
   );
 
-  // Only use setter
-  const {} = useContext(CookieContext);
+  const uniqueIds = [...new Set(expanderIds)];
+
+  if (uniqueIds.length !== expanderIds.length)
+    throw new Error("Ids must be unique");
+
+  const requiredPermissions: string[] = useMemo(
+    () =>
+      expander
+        .filter((child: React.ReactElement) => child.props.isRequired)
+        .map((child: React.ReactElement) => child.props.id),
+    [expander]
+  );
+
+  const { setPermissions } = useContext(CookieContext);
 
   const [selected, setSelected] = useState<string[]>(requiredPermissions);
   const [open, setOpen] = useState(blocking && !Cookies.get(COOKIE_PREFIX));
@@ -112,6 +114,7 @@ const CookieConsentRaw = ({
       });
 
       setOpen(false);
+      setPermissions(selection);
       onAcceptSelection(selection);
     },
     [onAcceptSelection]
@@ -139,8 +142,10 @@ const CookieConsentRaw = ({
     openSettings = DEFAULT_TEXT.OPEN_SETTINGS,
     acceptNecessary = DEFAULT_TEXT.ACCEPT_NECESSARY,
     acceptAll = DEFAULT_TEXT.ACCEPT_ALL,
-    ...footer
+    settings = {},
   } = text;
+
+  const { title: settingsTitle = SETTINGS_TEXT.TITLE } = settings;
 
   return (
     <div id="cookie-wrapper">
@@ -171,26 +176,27 @@ const CookieConsentRaw = ({
       <div
         id="settings-wrapper"
         role="dialog"
-        style={{
-          opacity: settingsVisible ? 1 : 0,
-          pointerEvents: settingsVisible ? "all" : "none",
-        }}
+        className={settingsVisible ? "visible" : ""}
       >
-        <Header title="Cookie settings" onCloseSettings={onCloseSettings} />
+        <Header title={settingsTitle} onCloseSettings={onCloseSettings} />
 
         <div id="settings-body">
-          {React.Children.map(children, (child: React.ReactElement) =>
-            React.cloneElement(child, {
-              ...child.props,
-              onToggleSelection: requiredPermissions.includes(child.props.id)
-                ? undefined
-                : onToggleSelection(child.props.id),
-            })
-          )}
+          {React.Children.map(children, (child: React.ReactElement) => {
+            if (elementIsExpander(child)) {
+              return React.cloneElement(child, {
+                ...child.props,
+                onToggleSelection: requiredPermissions.includes(child.props.id)
+                  ? undefined
+                  : onToggleSelection(child.props.id),
+              });
+            } else {
+              return child;
+            }
+          })}
         </div>
 
         <Footer
-          text={footer}
+          text={settings}
           onAcceptAll={onAcceptAll}
           onAcceptRequired={onAcceptRequired}
           onAcceptCurrent={onAcceptCurrent}

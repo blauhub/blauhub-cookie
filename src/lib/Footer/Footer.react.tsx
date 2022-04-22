@@ -5,7 +5,7 @@ import { Button } from "../Button";
 
 import "./footer.scss";
 
-interface PropsType {
+export interface PropsType {
   readonly text?: {
     readonly rejectOptional?: string;
     readonly acceptAll?: string;
