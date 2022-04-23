@@ -1,4 +1,10 @@
-import React, { useState, useMemo, useContext, useCallback } from "react";
+import React, {
+  useState,
+  useEffect,
+  useMemo,
+  useContext,
+  useCallback,
+} from "react";
 import Cookies from "js-cookie";
 
 // Components
@@ -21,6 +27,7 @@ type SettingsProps = FooterProps["text"] & {
 
 export interface PropsType {
   readonly isOpen?: boolean;
+  readonly disableScroll?: boolean;
   readonly title?: React.ReactNode;
   readonly description?: React.ReactNode;
   readonly children?: React.ReactNode;
@@ -57,6 +64,7 @@ const getAllExpander = (expander: React.ReactNode) =>
 const CookieConsentRaw = ({
   isOpen,
   title,
+  disableScroll = true,
   description,
   children,
   onAcceptSelection,
@@ -136,6 +144,12 @@ const CookieConsentRaw = ({
 
     saveOnAccept(permissions);
   }, [children, saveOnAccept]);
+
+  useEffect(() => {
+    if (!disableScroll) return;
+
+    document.body.style.overflow = isOpen ? "hidden" : "auto";
+  }, [disableScroll, isOpen]);
 
   if (!isOpen) return null;
 
