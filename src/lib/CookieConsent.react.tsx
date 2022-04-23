@@ -20,11 +20,11 @@ type SettingsProps = FooterProps["text"] & {
 };
 
 export interface PropsType {
-  readonly blocking?: boolean;
+  readonly isOpen?: boolean;
   readonly title?: React.ReactNode;
   readonly description?: React.ReactNode;
   readonly children?: React.ReactNode;
-  readonly onAcceptSelection: (permisssions: string[]) => void;
+  readonly onAcceptSelection?: (permisssions: string[]) => void;
   readonly text?: {
     readonly openSettings?: string;
     readonly acceptNecessary?: string;
@@ -55,7 +55,7 @@ const getAllExpander = (expander: React.ReactNode) =>
   React.Children.toArray(expander).filter(elementIsExpander);
 
 const CookieConsentRaw = ({
-  blocking = true,
+  isOpen,
   title,
   description,
   children,
@@ -83,7 +83,6 @@ const CookieConsentRaw = ({
   const { setPermissions } = useContext(CookieContext);
 
   const [selected, setSelected] = useState<string[]>(requiredPermissions);
-  const [open, setOpen] = useState(blocking && !Cookies.get(COOKIE_PREFIX));
   const [settingsVisible, setSettingsVisible] = useState(false);
 
   const onOpenSettings = useCallback(() => {
@@ -113,9 +112,11 @@ const CookieConsentRaw = ({
         ...COOKIE_CONFIG,
       });
 
-      setOpen(false);
       setPermissions(selection);
-      onAcceptSelection(selection);
+
+      if (onAcceptSelection) {
+        onAcceptSelection(selection);
+      }
     },
     [onAcceptSelection]
   );
@@ -136,7 +137,7 @@ const CookieConsentRaw = ({
     saveOnAccept(permissions);
   }, [children, saveOnAccept]);
 
-  if (!open) return null;
+  if (!isOpen) return null;
 
   const {
     openSettings = DEFAULT_TEXT.OPEN_SETTINGS,
