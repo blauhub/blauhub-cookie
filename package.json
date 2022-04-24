@@ -5,7 +5,7 @@
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
   "types": "dist/index.d.ts",
-  "author": "Raoul Baron <baron@blauhub.io> (https://blauhub.io)",
+  "author": "Raoul Baron <hello@blauhub.io> (https://blauhub.io)",
   "license": "MIT",
   "keywords": [
     "cookieconsent",

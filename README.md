@@ -24,7 +24,7 @@ npm install blauhub-cookie
 
 ```js
 import { CookieConsent, Expander } from "blauhub-cookie";
-import "blauhub-cookie/main.css";
+import "blauhub-cookie/dist/bhcookie.min.css";
 
 function Component() {
   return (

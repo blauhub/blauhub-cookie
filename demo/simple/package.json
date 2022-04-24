@@ -1,0 +1,9 @@
+{
+  "name": "demo",
+  "version": "0.1.0",
+  "description": "Blauhub-cookie usage demo",
+  "main": "index.tsx",
+  "repository": "https://github.com/blauhub/blauhub-cookie",
+  "author": "Raoul Baron <hello@blauhub.io> (https://blauhub.io)",
+  "license": "MIT"
+}
