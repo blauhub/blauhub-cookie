@@ -30,6 +30,7 @@ const main = () => {
   root.render(
     <CookieConsentContext>
       <CookieConsent
+        isOpen
         title="🍪 Cookie settings"
         description={
           <p>

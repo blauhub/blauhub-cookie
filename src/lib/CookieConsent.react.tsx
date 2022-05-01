@@ -5,7 +5,7 @@ import React, {
   useContext,
   useCallback,
 } from "react";
-import Cookies from "js-cookie";
+import Cookies, { CookieAttributes } from "js-cookie";
 
 // Components
 import { Expander } from "./Expander";
@@ -39,6 +39,7 @@ export interface PropsType {
 
     readonly settings?: SettingsProps;
   };
+  readonly cookieConfig?: CookieAttributes;
 }
 
 const DEFAULT_TEXT = {
@@ -51,7 +52,7 @@ const SETTINGS_TEXT = {
   TITLE: "Cookie settings",
 };
 
-const COOKIE_CONFIG = {
+const DEFAULT_COOKIE_CONFIG = {
   expires: 182, // 6 months
 };
 
@@ -69,6 +70,7 @@ const CookieConsentRaw = ({
   children,
   onAcceptSelection,
   text = {},
+  cookieConfig = DEFAULT_COOKIE_CONFIG,
 }: PropsType) => {
   const expander = useMemo(() => getAllExpander(children), [children]);
   const expanderIds: string[] = expander.map(
@@ -116,9 +118,7 @@ const CookieConsentRaw = ({
 
   const saveOnAccept = useCallback(
     (selection: string[]) => {
-      Cookies.set(COOKIE_PREFIX, JSON.stringify(selection), {
-        ...COOKIE_CONFIG,
-      });
+      Cookies.set(COOKIE_PREFIX, JSON.stringify(selection), cookieConfig);
 
       setPermissions(selection);
 
